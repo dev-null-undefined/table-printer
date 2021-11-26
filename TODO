@@ -1,0 +1,6 @@
+ - [ ] Updated delimiter to string instead of single char
+ - [ ] Add support for more encodings
+ - [ ] Implement all options for the printing
+ - [ ] Add support for printing to file
+ - [ ] Add support for printing to file with a custom delimiter
+ - [ ] Add option for changing text alignment
