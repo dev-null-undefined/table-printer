@@ -13,4 +13,6 @@ string_t *create_string_empty(int buffer_size);
 
 void append_char_to_string(string_t *string, char c);
 
+void free_string(string_t *string);
+
 #endif

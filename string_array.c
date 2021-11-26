@@ -18,3 +18,10 @@ void add_string_to_array(string_array_t *string_array, string_t *string) {
     string_array->length++;
 }
 
+void free_string_array(string_array_t *array){
+    for (int i = 0; i < array->length; ++i){
+        free_string(array->strings[i]);
+    }
+    free(array->strings);
+    free(array);
+}

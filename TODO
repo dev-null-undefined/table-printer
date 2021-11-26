@@ -4,4 +4,4 @@
  - [ ] Add support for printing to file
  - [ ] Add support for printing to file with a custom delimiter
  - [x] Add option for changing text alignment
- - [ ] Fix memory management
+ - [x] Fix memory management

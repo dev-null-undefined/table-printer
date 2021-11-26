@@ -10,7 +10,6 @@ options_t* create_options(){
     options->delimiter = ',';
     options->flags = 0;
     options->stream = stdin;
-    options->color_count = 10;
     return options;
 }
 int compare_tag(const char *input, const char *tag, const char *short_tag) {
@@ -90,4 +89,11 @@ options_t *parse_options(int argc, char *argv[]) {
         options->flags |= COLORS;
     }
     return options;
+}
+
+void free_options(options_t* options){
+    if(options->stream!=stdin){
+        fclose(options->stream);
+    }
+    free(options);
 }

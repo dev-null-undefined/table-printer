@@ -6,7 +6,7 @@
 #define TABLE_FRAME_SEPARATOR "|"
 
 typedef struct {
-    string_array_t **string;
+    string_array_t **rows;
     int length;
     int capacity;
     int width;
@@ -14,6 +14,8 @@ typedef struct {
 } string_table_t;
 
 string_table_t *create_string_table(int width);
+
+string_table_t *get_string_table(options_t* options);
 
 void recalculate_max_column_length(string_table_t *string_table, string_array_t *new_row);
 
@@ -24,6 +26,10 @@ void print_table(string_table_t *string_table, options_t *option);
 void print_aligned_string(const char *format,void *data,int padding,int align_left);
 
 void set_console_color(int color);
+
+void free_string_table(string_table_t *table);
+
+#define COLOR_COUNT 10
 
 enum COLORS
 {

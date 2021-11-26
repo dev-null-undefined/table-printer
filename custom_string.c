@@ -28,3 +28,8 @@ void append_char_to_string(string_t *string, char c) {
     string->length++;
     string->chars[string->length] = '\0';
 }
+
+void free_string(string_t *string){
+    free(string->chars);
+    free(string);
+}
