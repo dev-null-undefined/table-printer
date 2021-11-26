@@ -1,7 +1,7 @@
  - [ ] Updated delimiter to string instead of single char
  - [ ] Add support for more encodings
  - [x] Implement all options for the printing
- - [ ] Add support for printing to file
+ - [x] Add support for printing to file
  - [ ] Add support for printing to file with a custom delimiter
  - [x] Add option for changing text alignment
  - [x] Fix memory management

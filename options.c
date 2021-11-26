@@ -10,6 +10,7 @@ options_t* create_options(){
     options->delimiter = ',';
     options->flags = 0;
     options->stream = stdin;
+    options->out_stream = stdout;
     return options;
 }
 int compare_tag(const char *input, const char *tag, const char *short_tag) {
@@ -29,6 +30,9 @@ void print_help_menu(){
     printf("  -c, --colors       use colors in the output\n");
     printf("  -H, --help         display this help\n");
     printf("  -l, --left-align   align text to the left side of the frame\n");
+    printf("  -o, --output-file  output to file instead of stdout\n");
+    printf("  -F, --force        used to override output file if file exists\n");
+    printf("  -d, --delimiter    delimiter char to separate fields\n");
 }
 
 int parse_argument(char *argument) {
@@ -46,6 +50,8 @@ int parse_argument(char *argument) {
         return FRAME;
     }else if (compare_tag(argument, "--left-align", "-l") == 0) {
         return ALIGN_LEFT;
+    } else if (compare_tag(argument, "--force", "-F") == 0) {
+        return FORCE;
     } else {
         return UNKNOWN;
     }
@@ -61,18 +67,40 @@ int check_color_capability() {
     return 0;
 }
 options_t *parse_options(int argc, char *argv[]) {
+    char *out_file = NULL;
     options_t *options = create_options();
     for (int i = 1; i < argc; ++i) {
         char *argument = argv[i];
-        if(strcmp(argument,"-d")==0 && i < argc-1) {
-            options->delimiter = argv[i+1][0];
+        if (compare_tag(argument, "--delimiter", "-d") == 0) {
+            if (i >= argc - 1) {
+                fprintf(stderr, "Error: %s can no be used as last argument.\n", argument);
+                continue;
+            }
+            if (argv[i + 1][1] != 0) {
+                fprintf(stderr, "Error: Delimeter can not be longer then 1 char.\n");
+                continue;
+            }
+            options->delimiter = argv[i + 1][0];
+            i++;
+            continue;
+        }
+        if (compare_tag(argument, "--output-file", "-o") == 0) {
+            if (i >= argc - 1) {
+                fprintf(stderr, "Error: %s can no be used as last argument.\n", argument);
+                continue;
+            }
+            if (out_file != NULL) {
+                fprintf(stderr, "Error: Only 1 output file can be specified\n");
+                continue;
+            }
+            out_file = argv[i + 1];
             i++;
             continue;
         }
         int parsed = parse_argument(argument);
-        if(parsed & UNKNOWN) {
-            if( access( argument, R_OK ) == 0 ) {
-                if(options->stream != stdin) {
+        if (parsed & UNKNOWN) {
+            if (access(argument, R_OK) == 0) {
+                if (options->stream != stdin) {
                     fprintf(stderr, "Error: Only one input file can be specified.\n");
                     exit(1);
                 }
@@ -85,7 +113,27 @@ options_t *parse_options(int argc, char *argv[]) {
         }
         options->flags |= parsed;
     }
-    if(check_color_capability()) {
+    if (out_file != NULL) {
+        if (strcasecmp(out_file, "stdout") == 0) {
+            options->out_stream = stdout;
+        } else if (strcasecmp(out_file, "stderr") == 0) {
+            options->out_stream = stderr;
+        } else if (access(out_file, F_OK) == 0) {
+            if (options->flags & FORCE) {
+                options->out_stream = fopen(out_file, "w");
+            } else {
+                fprintf(stderr, "Error: File exits and --force was not set defaulting to stdout\n");
+            }
+        } else {
+            FILE *file = fopen(out_file, "w");
+            if (file == NULL) {
+                fprintf(stderr, "Error: Failed to create file defaulting to stdout\n");
+            } else {
+                options->out_stream = file;
+            }
+        }
+    }
+    if (check_color_capability()) {
         options->flags |= COLORS;
     }
     return options;
@@ -94,6 +142,9 @@ options_t *parse_options(int argc, char *argv[]) {
 void free_options(options_t* options){
     if(options->stream!=stdin){
         fclose(options->stream);
+    }
+    if (options->out_stream != stdout && options->out_stream != stderr) {
+        fclose(options->out_stream);
     }
     free(options);
 }
