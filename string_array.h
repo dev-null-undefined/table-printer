@@ -1,4 +1,5 @@
 #include "custom_string.h"
+
 #ifndef TABLE_PRINTER_STRING_ARRAY_H
 #define TABLE_PRINTER_STRING_ARRAY_H
 

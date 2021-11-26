@@ -16,27 +16,27 @@ string_table_t *create_string_table(int width) {
     return string_table;
 }
 
-string_table_t *get_string_table(options_t* options){
+string_table_t *get_string_table(options_t *options) {
     string_table_t *table = NULL;
     string_t *buffer = create_string_empty(12);
     string_array_t *line = create_string_array(3);
 
     int input;
     int width = 0;
-    while ((input = getc(options->stream)) != EOF){
-        if(input==options->delimiter){
+    while ((input = getc(options->stream)) != EOF) {
+        if (input == options->delimiter) {
             add_string_to_array(line, buffer);
             buffer = create_string_empty(12);
             width++;
             continue;
         }
-        if (input == '\n'){
+        if (input == '\n') {
 
             add_string_to_array(line, buffer);
             buffer = create_string_empty(12);
             width++;
 
-            if(table==NULL) {
+            if (table == NULL) {
                 table = create_string_table(width);
             }
             add_row_to_table(table, line);
@@ -127,7 +127,7 @@ void set_frame_color(options_t *options) {
 }
 
 void print_table(string_table_t *string_table, options_t *options) {
-    if(string_table==NULL) return;
+    if (string_table == NULL) return;
     int max_counter_length = (options->flags & COUNTER) ? digit_count(string_table->length) : 0;
     if (options->flags & FRAME)
         print_separator(max_counter_length, string_table->max_column_length, string_table->width, options);
@@ -222,7 +222,7 @@ void set_console_color(int color, options_t *options) {
             break;
         default:
             return;
-    };
+    }
     fprintf(options->out_stream, "%s", s);
 }
 

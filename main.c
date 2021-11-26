@@ -4,7 +4,7 @@
 
 #define VERSION_NAME "0.0.1"
 
-void print_version(){
+void print_version() {
     printf("Table printer version: %s\n", VERSION_NAME);
 }
 
@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
         print_version();
         return 0;
     }
-    string_table_t *table= get_string_table(options);
-    print_table(table,options);
+    string_table_t *table = get_string_table(options);
+    print_table(table, options);
     free_string_table(table);
     free_options(options);
     return 0;

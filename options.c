@@ -5,21 +5,22 @@
 #include <stdio.h>
 #include <unistd.h>
 
-options_t* create_options(){
-    options_t *options = (options_t*) malloc(sizeof(options_t));
+options_t *create_options() {
+    options_t *options = (options_t *) malloc(sizeof(options_t));
     options->delimiter = ',';
     options->flags = 0;
     options->stream = stdin;
     options->out_stream = stdout;
     return options;
 }
+
 int compare_tag(const char *input, const char *tag, const char *short_tag) {
     if (strcasecmp(input, tag) == 0)
         return 0;
     return strcmp(input, short_tag);
 }
 
-void print_help_menu(){
+void print_help_menu() {
     printf("Usage: table [OPTION]... FILE\n");
     printf("Formats FILE, or standard input, to standard output.\n");
     printf("\n");
@@ -48,7 +49,7 @@ int parse_argument(char *argument) {
         return COLORS;
     } else if (compare_tag(argument, "--frame", "-f") == 0) {
         return FRAME;
-    }else if (compare_tag(argument, "--left-align", "-l") == 0) {
+    } else if (compare_tag(argument, "--left-align", "-l") == 0) {
         return ALIGN_LEFT;
     } else if (compare_tag(argument, "--force", "-F") == 0) {
         return FORCE;
@@ -56,16 +57,18 @@ int parse_argument(char *argument) {
         return UNKNOWN;
     }
 }
+
 int check_color_capability() {
-    char* term=getenv("TERM");
-    if (term==NULL) {
+    char *term = getenv("TERM");
+    if (term == NULL) {
         return 0;
     }
-    if (strcmp(term,"xterm-256color")==0) {
+    if (strcmp(term, "xterm-256color") == 0) {
         return 1;
     }
     return 0;
 }
+
 options_t *parse_options(int argc, char *argv[]) {
     char *out_file = NULL;
     options_t *options = create_options();
@@ -77,7 +80,7 @@ options_t *parse_options(int argc, char *argv[]) {
                 continue;
             }
             if (argv[i + 1][1] != 0) {
-                fprintf(stderr, "Error: Delimeter can not be longer then 1 char.\n");
+                fprintf(stderr, "Error: Delimiter can not be longer then 1 char.\n");
                 continue;
             }
             options->delimiter = argv[i + 1][0];
@@ -139,8 +142,8 @@ options_t *parse_options(int argc, char *argv[]) {
     return options;
 }
 
-void free_options(options_t* options){
-    if(options->stream!=stdin){
+void free_options(options_t *options) {
+    if (options->stream != stdin) {
         fclose(options->stream);
     }
     if (options->out_stream != stdout && options->out_stream != stderr) {

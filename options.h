@@ -12,10 +12,15 @@ typedef struct {
 } options_t;
 
 int compare_tag(const char *input, const char *tag, const char *short_tag);
+
 int parse_argument(char *argument);
+
 int check_color_capability();
+
 options_t *parse_options(int argc, char *argv[]);
+
 void print_help_menu();
+
 void free_options(options_t *options);
 
 enum OPTION_FLAGS {

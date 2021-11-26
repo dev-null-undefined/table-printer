@@ -29,7 +29,7 @@ void append_char_to_string(string_t *string, char c) {
     string->chars[string->length] = '\0';
 }
 
-void free_string(string_t *string){
+void free_string(string_t *string) {
     free(string->chars);
     free(string);
 }
