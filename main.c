@@ -2,17 +2,7 @@
 #include "string_table.h"
 #include "options.h"
 
-void print_help_menu(){
-    printf("Usage: table [OPTION]... FILE\n");
-    printf("Formats FILE, or standard input, to standard output.\n");
-    printf("\n");
-    printf("  -C, --counter      prefix each line of output with the line number\n");
-    printf("  -h, --header       treats the first line as header and separates it\n");
-    printf("  -v, --version      display the version of table\n");
-    printf("  -f, --frame        print a frame around the output\n");
-    printf("  -c, --colors       use colors in the output\n");
-    printf("  -h, --help         display this help\n");
-}
+#define VERSION_NAME "0.0.1"
 
 void do_the_magic(options_t* options){
     string_table_t *table = NULL;
@@ -50,10 +40,18 @@ void do_the_magic(options_t* options){
     }
 }
 
+void print_version(){
+    printf("Table printer version: %s\n", VERSION_NAME);
+}
+
 int main(int argc, char *argv[]) {
     options_t *options = parse_options(argc, argv);
     if (options->flags & HELP) {
         print_help_menu();
+    }
+    if (options->flags & VERSION) {
+        print_version();
+        return 0;
     }
     do_the_magic(options);
     return 0;

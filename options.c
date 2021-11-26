@@ -10,15 +10,30 @@ options_t* create_options(){
     options->delimiter = ',';
     options->flags = 0;
     options->stream = stdin;
+    options->color_count = 10;
     return options;
 }
 int compare_tag(const char *input, const char *tag, const char *short_tag) {
     if (strcasecmp(input, tag) == 0)
         return 0;
-    return strcasecmp(input, short_tag);
+    return strcmp(input, short_tag);
 }
+
+void print_help_menu(){
+    printf("Usage: table [OPTION]... FILE\n");
+    printf("Formats FILE, or standard input, to standard output.\n");
+    printf("\n");
+    printf("  -C, --counter      prefix each line of output with the line number\n");
+    printf("  -h, --header       treats the first line as header and separates it\n");
+    printf("  -v, --version      display the version of table\n");
+    printf("  -f, --frame        print a frame around the output\n");
+    printf("  -c, --colors       use colors in the output\n");
+    printf("  -H, --help         display this help\n");
+    printf("  -l, --left-align   align text to the left side of the frame\n");
+}
+
 int parse_argument(char *argument) {
-    if (compare_tag(argument, "--help", "-h") == 0) {
+    if (compare_tag(argument, "--help", "-H") == 0) {
         return HELP;
     } else if (compare_tag(argument, "--version", "-v") == 0) {
         return VERSION;
@@ -30,6 +45,8 @@ int parse_argument(char *argument) {
         return COLORS;
     } else if (compare_tag(argument, "--frame", "-f") == 0) {
         return FRAME;
+    }else if (compare_tag(argument, "--left-align", "-l") == 0) {
+        return ALIGN_LEFT;
     } else {
         return UNKNOWN;
     }
