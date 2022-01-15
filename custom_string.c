@@ -4,7 +4,8 @@
 
 string_t *create_string(char *chars, int buffer_size) {
     string_t *string = (string_t *) malloc(sizeof(string_t));
-    string->chars = chars;
+    string->chars = (char *) malloc(buffer_size * sizeof(char));
+    strncpy(string->chars, chars, buffer_size);
     string->length = (int) strlen(chars);
     string->capacity = buffer_size;
     return string;
