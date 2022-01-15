@@ -30,8 +30,8 @@ string_table_t *get_string_table(options_t *options) {
             width++;
             continue;
         }
-        if (input == '\n') {
-
+        if (input == '\n' || input == '\r') {
+            if(buffer->length == 0) continue;
             add_string_to_array(line, buffer);
             buffer = create_string_empty(12);
             width++;
