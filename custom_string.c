@@ -9,6 +9,7 @@ string_t *create_string(char *chars, int buffer_size) {
     string->length = (int) strlen(chars);
     string->capacity = buffer_size;
     string->char_count = 0;
+    string->chars[0] = 0;
     return string;
 }
 
@@ -18,6 +19,7 @@ string_t *create_string_empty(int buffer_size) {
     string->length = 0;
     string->capacity = buffer_size;
     string->char_count = 0;
+    string->chars[0] = 0;
     return string;
 }
 
