@@ -2,12 +2,12 @@
 
 stdenv.mkDerivation rec {
   pname = "table-printer";
-  version = "v0.0.2";
+  version = "v0.0.4";
   src = fetchFromGitHub {
     owner = "ThreshMain";
     repo = pname;
     rev = version;
-    sha256 = "sha256-xch4OrgWdcCRaR1XnRIhCyMRnaUwUfV910qFk6qIvf4=";
+    sha256 = "sha256-Mc5CeUBquUxOpmkbVIw7aEGfJIotsCgl7EyRZi6ricc=";
     fetchSubmodules = true;
   };
   nativeBuildInputs = [ cmake ];
