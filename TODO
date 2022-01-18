@@ -1,8 +1,9 @@
  - [ ] Updated delimiter to string instead of single char
  - [ ] Support UTF-8 delimiter
- - [ ] Add support for more encodings
+ - [/] Add support for more encodings (partially done)
  - [x] Implement all options for the printing
  - [x] Add support for printing to file
  - [ ] Add support for printing to file with a custom delimiter
  - [x] Add option for changing text alignment
  - [x] Fix memory management
+ - [ ] Create SQL database connector and run SQL query with result formatted using the string_table
