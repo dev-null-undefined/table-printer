@@ -1,4 +1,5 @@
  - [ ] Updated delimiter to string instead of single char
+ - [ ] Support UTF-8 delimiter
  - [ ] Add support for more encodings
  - [x] Implement all options for the printing
  - [x] Add support for printing to file

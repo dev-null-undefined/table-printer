@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 
 string_table_t *create_string_table(int width) {
     string_table_t *string_table = (string_table_t *) malloc(sizeof(string_table_t));
@@ -18,36 +19,61 @@ string_table_t *create_string_table(int width) {
 
 string_table_t *get_string_table(options_t *options) {
     string_table_t *table = NULL;
-    string_t *buffer = create_string_empty(12);
-    string_array_t *line = create_string_array(3);
+    string_t *field_buffer = create_string_empty(12);
+    string_array_t *line_buffer = create_string_array(3);
+
+    string_t *char_buffer = NULL;
 
     int input;
     int width = 0;
     while ((input = getc(options->stream)) != EOF) {
         if (input == options->delimiter) {
-            add_string_to_array(line, buffer);
-            buffer = create_string_empty(12);
+            add_string_to_array(line_buffer, field_buffer);
+            field_buffer = create_string_empty(12);
             width++;
             continue;
         }
         if (input == '\n' || input == '\r') {
-            if(buffer->length == 0) continue;
-            add_string_to_array(line, buffer);
-            buffer = create_string_empty(12);
+            if (field_buffer->length == 0) continue;
+            add_string_to_array(line_buffer, field_buffer);
+            field_buffer = create_string_empty(12);
             width++;
 
             if (table == NULL) {
                 table = create_string_table(width);
             }
-            add_row_to_table(table, line);
-            line = create_string_array(3);
+            add_row_to_table(table, line_buffer);
+            line_buffer = create_string_array(3);
             width = 0;
         } else {
-            append_char_to_string(buffer, (char) input);
+
+            char current_char = (char) input;
+
+            if (current_char < 0) {
+                unsigned char value = (unsigned char) current_char;
+                if (value & 0x40) {
+                    if (char_buffer && char_buffer->length > 0) {
+                        append_char_to_string(field_buffer, char_buffer->chars, char_buffer->length);
+                        free_string(char_buffer);
+                        char_buffer = NULL;
+                    }
+                }
+                if (char_buffer == NULL) {
+                    char_buffer = create_string_empty(2);
+                }
+                append_char_to_string(char_buffer, &current_char, 1);
+                continue;
+            }
+            if (char_buffer && char_buffer->length > 0) {
+                append_char_to_string(field_buffer, char_buffer->chars, char_buffer->length);
+                free_string(char_buffer);
+                char_buffer = NULL;
+            }
+            append_char_to_string(field_buffer, &current_char, 1);
         }
     }
-    free_string(buffer);
-    free_string_array(line);
+    free_string(field_buffer);
+    free_string_array(line_buffer);
     return table;
 }
 
@@ -55,8 +81,8 @@ void recalculate_max_column_length(string_table_t *string_table, string_array_t 
     for (int i = 0; i < string_table->width; ++i) {
         int max_length = string_table->max_column_length[i];
         if (i < new_row->length) {
-            if (new_row->strings[i]->length > max_length) {
-                max_length = new_row->strings[i]->length;
+            if (new_row->strings[i]->char_count > max_length) {
+                max_length = new_row->strings[i]->char_count;
             }
         } else {
             fprintf(stderr, "Error: column %d is not defined\n", i);
@@ -69,7 +95,7 @@ void add_row_to_table(string_table_t *string_table, string_array_t *new_row) {
     if (string_table->length + 1 > string_table->capacity) {
         string_table->capacity *= 2;
         string_table->rows = (string_array_t **) realloc(string_table->rows,
-                                                         sizeof(*string_table->rows) * string_table->capacity);
+                                                         sizeof(string_array_t *) * string_table->capacity);
     }
     recalculate_max_column_length(string_table, new_row);
     string_table->rows[string_table->length] = new_row;
@@ -154,7 +180,7 @@ void print_table(string_table_t *string_table, options_t *options) {
             }
             fprintf(options->out_stream, " ");
             string_t *string = row->strings[j];
-            int padding = string_table->max_column_length[j] - string->length;
+            int padding = string_table->max_column_length[j] - string->char_count;
             rotate_color(&color_index, COLOR_COUNT, options);
             print_aligned_string("%s", string->chars, padding, options->flags & ALIGN_LEFT, options);
             set_frame_color(options);
