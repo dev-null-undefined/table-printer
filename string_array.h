@@ -9,10 +9,10 @@ typedef struct {
     int capacity;
 } string_array_t;
 
-string_array_t *create_string_array(int capacity);
+string_array_t *string_array_new(int capacity);
 
-void add_string_to_array(string_array_t *string_array, string_t *string);
+void string_array_add(string_array_t *string_array, string_t *string);
 
-void free_string_array(string_array_t *array);
+void string_array_free(string_array_t *array);
 
 #endif

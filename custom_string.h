@@ -8,12 +8,12 @@ typedef struct {
     int capacity;
 } string_t;
 
-string_t *create_string(char *chars, int buffer_size);
+string_t *string_new(char *chars, int buffer_size);
 
-string_t *create_string_empty(int buffer_size);
+string_t *string_new_empty(int buffer_size);
 
-void append_char_to_string(string_t *string, char *c, int length);
+void string_append(string_t *string, char *c, int length);
 
-void free_string(string_t *string);
+void string_free(string_t *string);
 
 #endif

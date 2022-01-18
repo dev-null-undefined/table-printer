@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <string.h>
 
-string_table_t *create_string_table(int width) {
+string_table_t *string_table_new(int width) {
     string_table_t *string_table = (string_table_t *) malloc(sizeof(string_table_t));
     string_table->capacity = 4;
     string_table->rows = (string_array_t **) malloc(sizeof(string_array_t *) * string_table->capacity);
@@ -17,10 +17,10 @@ string_table_t *create_string_table(int width) {
     return string_table;
 }
 
-string_table_t *get_string_table(options_t *options) {
+string_table_t *string_table_create(options_t *options) {
     string_table_t *table = NULL;
-    string_t *field_buffer = create_string_empty(12);
-    string_array_t *line_buffer = create_string_array(3);
+    string_t *field_buffer = string_new_empty(12);
+    string_array_t *line_buffer = string_array_new(3);
 
     string_t *char_buffer = NULL;
 
@@ -28,22 +28,22 @@ string_table_t *get_string_table(options_t *options) {
     int width = 0;
     while ((input = getc(options->stream)) != EOF) {
         if (input == options->delimiter) {
-            add_string_to_array(line_buffer, field_buffer);
-            field_buffer = create_string_empty(12);
+            string_array_add(line_buffer, field_buffer);
+            field_buffer = string_new_empty(12);
             width++;
             continue;
         }
         if (input == '\n' || input == '\r') {
             if (field_buffer->length == 0) continue;
-            add_string_to_array(line_buffer, field_buffer);
-            field_buffer = create_string_empty(12);
+            string_array_add(line_buffer, field_buffer);
+            field_buffer = string_new_empty(12);
             width++;
 
             if (table == NULL) {
-                table = create_string_table(width);
+                table = string_table_new(width);
             }
-            add_row_to_table(table, line_buffer);
-            line_buffer = create_string_array(3);
+            string_table_add_row(table, line_buffer);
+            line_buffer = string_array_new(3);
             width = 0;
         } else {
 
@@ -53,31 +53,31 @@ string_table_t *get_string_table(options_t *options) {
                 unsigned char value = (unsigned char) current_char;
                 if (value & 0x40) {
                     if (char_buffer && char_buffer->length > 0) {
-                        append_char_to_string(field_buffer, char_buffer->chars, char_buffer->length);
-                        free_string(char_buffer);
+                        string_append(field_buffer, char_buffer->chars, char_buffer->length);
+                        string_free(char_buffer);
                         char_buffer = NULL;
                     }
                 }
                 if (char_buffer == NULL) {
-                    char_buffer = create_string_empty(2);
+                    char_buffer = string_new_empty(2);
                 }
-                append_char_to_string(char_buffer, &current_char, 1);
+                string_append(char_buffer, &current_char, 1);
                 continue;
             }
             if (char_buffer && char_buffer->length > 0) {
-                append_char_to_string(field_buffer, char_buffer->chars, char_buffer->length);
-                free_string(char_buffer);
+                string_append(field_buffer, char_buffer->chars, char_buffer->length);
+                string_free(char_buffer);
                 char_buffer = NULL;
             }
-            append_char_to_string(field_buffer, &current_char, 1);
+            string_append(field_buffer, &current_char, 1);
         }
     }
-    free_string(field_buffer);
-    free_string_array(line_buffer);
+    string_free(field_buffer);
+    string_array_free(line_buffer);
     return table;
 }
 
-void recalculate_max_column_length(string_table_t *string_table, string_array_t *new_row) {
+void string_table_recalculate(string_table_t *string_table, string_array_t *new_row) {
     for (int i = 0; i < string_table->width; ++i) {
         int max_length = string_table->max_column_length[i];
         if (i < new_row->length) {
@@ -91,13 +91,13 @@ void recalculate_max_column_length(string_table_t *string_table, string_array_t 
     }
 }
 
-void add_row_to_table(string_table_t *string_table, string_array_t *new_row) {
+void string_table_add_row(string_table_t *string_table, string_array_t *new_row) {
     if (string_table->length + 1 > string_table->capacity) {
         string_table->capacity *= 2;
         string_table->rows = (string_array_t **) realloc(string_table->rows,
                                                          sizeof(string_array_t *) * string_table->capacity);
     }
-    recalculate_max_column_length(string_table, new_row);
+    string_table_recalculate(string_table, new_row);
     string_table->rows[string_table->length] = new_row;
     string_table->length++;
 }
@@ -111,7 +111,7 @@ int digit_count(int number) {
     return count == 0 ? 1 : count;
 }
 
-void print_aligned_string(const char *format, void *data, int padding, int align_left, options_t *options) {
+void print_aligned_string(const char *format, void *data, int padding, unsigned int align_left, options_t *options) {
     if (!align_left) {
         for (int i = 0; i < padding; ++i) {
             fprintf(options->out_stream, " ");
@@ -148,53 +148,53 @@ void rotate_color(int *color, int color_count, options_t *options) {
     *color = (*color + 1) % color_count;
 }
 
-void set_frame_color(options_t *options) {
+void reset_console_color(options_t *options) {
     set_console_color(RESET, options);
 }
 
-void print_table(string_table_t *string_table, options_t *options) {
+void string_table_print(string_table_t *string_table, options_t *option) {
     if (string_table == NULL) return;
-    int max_counter_length = (options->flags & COUNTER) ? digit_count(string_table->length) : 0;
-    if (options->flags & FRAME)
-        print_separator(max_counter_length, string_table->max_column_length, string_table->width, options);
+    int max_counter_length = (option->flags & COUNTER) ? digit_count(string_table->length) : 0;
+    if (option->flags & FRAME)
+        print_separator(max_counter_length, string_table->max_column_length, string_table->width, option);
     for (int line_number = 0; line_number < string_table->length; ++line_number) {
         int color_index = 0;
-        if (line_number == 1 && options->flags & HEADER && options->flags & FRAME) {
-            print_separator(max_counter_length, string_table->max_column_length, string_table->width, options);
+        if (line_number == 1 && option->flags & HEADER && option->flags & FRAME) {
+            print_separator(max_counter_length, string_table->max_column_length, string_table->width, option);
         }
         string_array_t *row = string_table->rows[line_number];
-        if (options->flags & COUNTER) {
-            if (options->flags & FRAME) {
-                fprintf(options->out_stream, TABLE_FRAME_SEPARATOR);
+        if (option->flags & COUNTER) {
+            if (option->flags & FRAME) {
+                fprintf(option->out_stream, TABLE_FRAME_SEPARATOR);
             }
-            fprintf(options->out_stream, " ");
-            rotate_color(&color_index, COLOR_COUNT, options);
+            fprintf(option->out_stream, " ");
+            rotate_color(&color_index, COLOR_COUNT, option);
             print_aligned_string("%d", (void *) (intptr_t) line_number,
                                  max_counter_length - digit_count(line_number),
-                                 options->flags & ALIGN_LEFT, options);
-            set_frame_color(options);
+                                 option->flags & ALIGN_LEFT, option);
+            reset_console_color(option);
         }
         for (int j = 0; j < row->length; ++j) {
-            if (options->flags & FRAME) {
-                fprintf(options->out_stream, TABLE_FRAME_SEPARATOR);
+            if (option->flags & FRAME) {
+                fprintf(option->out_stream, TABLE_FRAME_SEPARATOR);
             }
-            fprintf(options->out_stream, " ");
+            fprintf(option->out_stream, " ");
             string_t *string = row->strings[j];
             int padding = string_table->max_column_length[j] - string->char_count;
-            rotate_color(&color_index, COLOR_COUNT, options);
-            print_aligned_string("%s", string->chars, padding, options->flags & ALIGN_LEFT, options);
-            set_frame_color(options);
-            if (options->flags & FRAME) {
-                fprintf(options->out_stream, " ");
+            rotate_color(&color_index, COLOR_COUNT, option);
+            print_aligned_string("%s", string->chars, padding, option->flags & ALIGN_LEFT, option);
+            reset_console_color(option);
+            if (option->flags & FRAME) {
+                fprintf(option->out_stream, " ");
                 if (j == row->length - 1) {
-                    fprintf(options->out_stream, TABLE_FRAME_SEPARATOR);
+                    fprintf(option->out_stream, TABLE_FRAME_SEPARATOR);
                 }
             }
         }
-        fprintf(options->out_stream, "\n");
+        fprintf(option->out_stream, "\n");
     }
-    if (options->flags & FRAME)
-        print_separator(max_counter_length, string_table->max_column_length, string_table->width, options);
+    if (option->flags & FRAME)
+        print_separator(max_counter_length, string_table->max_column_length, string_table->width, option);
 
 }
 
@@ -252,9 +252,9 @@ void set_console_color(int color, options_t *options) {
     fprintf(options->out_stream, "%s", s);
 }
 
-void free_string_table(string_table_t *table) {
+void string_table_free(string_table_t *table) {
     for (int i = 0; i < table->length; i++) {
-        free_string_array(table->rows[i]);
+        string_array_free(table->rows[i]);
     }
     free(table->rows);
     free(table->max_column_length);

@@ -36,7 +36,7 @@ void print_help_menu() {
     printf("  -d, --delimiter    delimiter char to separate fields\n");
 }
 
-int parse_argument(char *argument) {
+OPTION_FLAGS parse_argument(char *argument) {
     if (compare_tag(argument, "--help", "-H") == 0) {
         return HELP;
     } else if (compare_tag(argument, "--version", "-v") == 0) {
@@ -100,7 +100,7 @@ options_t *parse_options(int argc, char *argv[]) {
             i++;
             continue;
         }
-        int parsed = parse_argument(argument);
+        OPTION_FLAGS parsed = parse_argument(argument);
         if (parsed & UNKNOWN) {
             if (access(argument, R_OK) == 0) {
                 if (options->stream != stdin) {
@@ -142,7 +142,7 @@ options_t *parse_options(int argc, char *argv[]) {
     return options;
 }
 
-void free_options(options_t *options) {
+void options_free(options_t *options) {
     if (options->stream != stdin) {
         fclose(options->stream);
     }

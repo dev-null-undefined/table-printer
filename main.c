@@ -18,10 +18,10 @@ int main(int argc, char *argv[]) {
         print_version();
         return 0;
     }
-    string_table_t *table = get_string_table(options);
-    print_table(table, options);
-    free_string_table(table);
-    free_options(options);
+    string_table_t *table = string_table_create(options);
+    string_table_print(table, options);
+    string_table_free(table);
+    options_free(options);
     return 0;
 }
 

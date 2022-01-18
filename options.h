@@ -6,24 +6,12 @@
 
 typedef struct {
     char delimiter;
-    int flags;
+    unsigned int flags;
     FILE *stream;
     FILE *out_stream;
 } options_t;
 
-int compare_tag(const char *input, const char *tag, const char *short_tag);
-
-int parse_argument(char *argument);
-
-int check_color_capability();
-
-options_t *parse_options(int argc, char *argv[]);
-
-void print_help_menu();
-
-void free_options(options_t *options);
-
-enum OPTION_FLAGS {
+typedef enum {
     HEADER = 1 << 1,
     COUNTER = 1 << 2,
     COLORS = 1 << 3,
@@ -33,6 +21,16 @@ enum OPTION_FLAGS {
     VERSION = 1 << 28,
     HELP = 1 << 29,
     UNKNOWN = 1 << 30,
-};
+} OPTION_FLAGS;
+
+OPTION_FLAGS parse_argument(char *argument);
+
+int check_color_capability();
+
+options_t *parse_options(int argc, char *argv[]);
+
+void print_help_menu();
+
+void options_free(options_t *options);
 
 #endif //TABLE_PRINTER_OPTIONS_H

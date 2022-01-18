@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-string_t *create_string(char *chars, int buffer_size) {
+string_t *string_new(char *chars, int buffer_size) {
     string_t *string = (string_t *) malloc(sizeof(string_t));
     string->chars = (char *) malloc(buffer_size * sizeof(char));
     strncpy(string->chars, chars, buffer_size);
@@ -13,7 +13,7 @@ string_t *create_string(char *chars, int buffer_size) {
     return string;
 }
 
-string_t *create_string_empty(int buffer_size) {
+string_t *string_new_empty(int buffer_size) {
     string_t *string = (string_t *) malloc(sizeof(string_t));
     string->chars = (char *) malloc(buffer_size * sizeof(char));
     string->length = 0;
@@ -24,7 +24,7 @@ string_t *create_string_empty(int buffer_size) {
 }
 
 
-void append_char_to_string(string_t *string, char *c, int length) {
+void string_append(string_t *string, char *c, int length) {
     while (string->length + 1 + length > string->capacity) {
         string->capacity *= 2;
         string->chars = (char *) realloc(string->chars, sizeof(*string->chars) * string->capacity);
@@ -38,7 +38,7 @@ void append_char_to_string(string_t *string, char *c, int length) {
     string->chars[string->length] = '\0';
 }
 
-void free_string(string_t *string) {
+void string_free(string_t *string) {
     free(string->chars);
     free(string);
 }
