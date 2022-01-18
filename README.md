@@ -1,9 +1,11 @@
 # table-printer
-Linux file content manipulation utility for printing formated table for better read ability
+Linux file content manipulation utility for printing formatted table for better readability
 
 ## Why 
-Have you ever tried reading config file that was in `csv` format and had trouble getting any usefull information out of it at first glance.
-This utility will format the table and color it so that it is easy to read and get sense of what each data means.
+
+Have you ever tried reading a config file that was in `csv` format and had trouble getting any useful information out of
+it at first glance. This utility will format the table and color it so that it is easy to read and get sense of what you
+are looking at.
 
 ### Example:
 > #### Before
