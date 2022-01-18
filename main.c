@@ -12,6 +12,7 @@ int main(int argc, char *argv[]) {
     options_t *options = parse_options(argc, argv);
     if (options->flags & HELP) {
         print_help_menu();
+        return 0;
     }
     if (options->flags & VERSION) {
         print_version();
