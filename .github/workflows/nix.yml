@@ -2,9 +2,11 @@ name: Nix
 
 on:
   push:
-    branches: [ main ]
+    paths:
+      - 'table-printer.nix'
   pull_request:
-    branches: [ main ]
+    paths:
+      - 'table-printer.nix'
 
 jobs:
   tests:
