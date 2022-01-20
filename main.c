@@ -2,7 +2,7 @@
 #include "string_table.h"
 #include "options.h"
 
-#define VERSION_NAME "0.0.4"
+#define VERSION_NAME "0.0.5"
 
 void print_version() {
     printf("Table printer version: %s\n", VERSION_NAME);
