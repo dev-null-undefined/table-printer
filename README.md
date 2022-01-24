@@ -1,7 +1,7 @@
 # table-printer
 Linux file content manipulation utility for printing formatted table for better readability
 
-## Why 
+## Motivation
 
 Have you ever tried reading a config file that was in `csv` format and had trouble getting any useful information out of
 it at first glance. This utility will format the table and color it so that it is easy to read and get sense of what you
@@ -42,5 +42,45 @@ are looking at.
 > | www-data | x | 33 |    33 | www-data |        /var/www | /usr/sbin/nologin |
 > +----------+---+----+-------+----------+-----------------+-------------------+
 > ```
+
+## Installation
+
+#### Download precompiled binary
+
+> Go to https://github.com/dev-null-undefined/table-printer/releases/latest
+> under assets download the table-printer binary
+> set the execution bit using `chmod +x table-printer`
+> and then you should be able to run it using relative path `./table-printer` or moving to for example `/usr/local/bin`
+> `mv table-printer /usr/local/bin`
+
+#### Clone the project and compile it your self
+
+> This can be done using cmake with following command
+> ```shell
+> git clone https://github.com/dev-null-undefined/table-printer
+> cd table-printer
+> cmake .
+> cmake --build .
+> ```
+
+## Usage
+
+table-printer has build in help menu that can be accessed by using the `--help` argument which will print this menu
+
+```
+Usage: table [OPTION]... FILE
+Formats FILE, or standard input, to standard output.
+
+  -C, --counter      prefix each line of output with the line number
+  -h, --header       treats the first line as header and separates it
+  -v, --version      display the version of table
+  -f, --frame        print a frame around the output
+  -c, --colors       use colors in the output
+  -H, --help         display this help
+  -l, --left-align   align text to the left side of the frame
+  -o, --output-file  output to file instead of stdout
+  -F, --force        used to override output file if file exists
+  -d, --delimiter    delimiter char to separate fields
+```
 
 Feel free to fork this repo and make any changes or file issue with suggestion.
