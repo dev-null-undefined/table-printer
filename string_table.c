@@ -199,6 +199,7 @@ void string_table_print(string_table_t *string_table, options_t *option) {
 }
 
 void set_console_color(int color, options_t *options) {
+    if (!(options->flags & COLORS)) return;
     const char *s;
     switch (color) {
         case BLACK:
