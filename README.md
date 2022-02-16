@@ -77,7 +77,7 @@ Formats FILE, or standard input, to standard output.
   -f, --frame        print a frame around the output
   -c, --colors       use colors in the output
   -H, --help         display this help
-  -l, --left-align   align text to the left side of the frame
+  -r, --align-right  align text to the right side of the frame
   -o, --output-file  output to file instead of stdout
   -F, --force        used to override output file if file exists
   -d, --delimiter    delimiter char to separate fields

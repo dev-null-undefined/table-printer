@@ -30,7 +30,7 @@ void print_help_menu() {
     printf("  -f, --frame        print a frame around the output\n");
     printf("  -c, --colors       use colors in the output\n");
     printf("  -H, --help         display this help\n");
-    printf("  -l, --left-align   align text to the left side of the frame\n");
+    printf("  -r, --align-right  align text to the right side of the frame\n");
     printf("  -o, --output-file  output to file instead of stdout\n");
     printf("  -F, --force        used to override output file if file exists\n");
     printf("  -d, --delimiter    delimiter char to separate fields\n");
@@ -49,8 +49,8 @@ OPTION_FLAGS parse_argument(char *argument) {
         return COLORS;
     } else if (compare_tag(argument, "--frame", "-f") == 0) {
         return FRAME;
-    } else if (compare_tag(argument, "--left-align", "-l") == 0) {
-        return ALIGN_LEFT;
+    } else if (compare_tag(argument, "--align-right", "-r") == 0) {
+        return ALIGN_RIGHT;
     } else if (compare_tag(argument, "--force", "-F") == 0) {
         return FORCE;
     } else {

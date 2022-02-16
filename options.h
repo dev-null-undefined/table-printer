@@ -16,7 +16,7 @@ typedef enum {
     COUNTER = 1 << 2,
     COLORS = 1 << 3,
     FRAME = 1 << 4,
-    ALIGN_LEFT = 1 << 5,
+    ALIGN_RIGHT = 1 << 5,
     FORCE = 1 << 6,
     VERSION = 1 << 28,
     HELP = 1 << 29,

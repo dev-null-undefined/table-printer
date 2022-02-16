@@ -111,14 +111,14 @@ int digit_count(int number) {
     return count == 0 ? 1 : count;
 }
 
-void print_aligned_string(const char *format, void *data, int padding, unsigned int align_left, options_t *options) {
-    if (!align_left) {
+void print_aligned_string(const char *format, void *data, int padding, unsigned int align_right, options_t *options) {
+    if (align_right) {
         for (int i = 0; i < padding; ++i) {
             fprintf(options->out_stream, " ");
         }
     }
     fprintf(options->out_stream, format, data);
-    if (align_left) {
+    if (!align_right) {
         for (int i = 0; i < padding; ++i) {
             fprintf(options->out_stream, " ");
         }
@@ -171,7 +171,7 @@ void string_table_print(string_table_t *string_table, options_t *option) {
             rotate_color(&color_index, COLOR_COUNT, option);
             print_aligned_string("%d", (void *) (intptr_t) line_number,
                                  max_counter_length - digit_count(line_number),
-                                 option->flags & ALIGN_LEFT, option);
+                                 option->flags & ALIGN_RIGHT, option);
             reset_console_color(option);
         }
         for (int j = 0; j < row->length; ++j) {
@@ -182,7 +182,7 @@ void string_table_print(string_table_t *string_table, options_t *option) {
             string_t *string = row->strings[j];
             int padding = string_table->max_column_length[j] - string->char_count;
             rotate_color(&color_index, COLOR_COUNT, option);
-            print_aligned_string("%s", string->chars, padding, option->flags & ALIGN_LEFT, option);
+            print_aligned_string("%s", string->chars, padding, option->flags & ALIGN_RIGHT, option);
             reset_console_color(option);
             if (option->flags & FRAME) {
                 fprintf(option->out_stream, " ");
